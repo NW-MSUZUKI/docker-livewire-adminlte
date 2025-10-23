@@ -1,0 +1,57 @@
+volumes:
+  db-data:
+
+services:
+  dev-adminlte-php-cli: # Web server for remote debug on PhpStorm.
+    build: ./docker
+    volumes:
+      - ./src:/var/www/html/
+      - ./docker/php.ini:/usr/local/etc/php/php.ini
+    working_dir: /var/www/html
+    container_name: dev-adminlte-php-cli
+    depends_on:
+      - dev-adminlte-db
+    restart: always
+
+  dev-adminlte-web:
+    build: ./docker
+    ports:
+      - 80:80
+    volumes:
+      - ./src:/var/www/html/
+      - ./docker/php.ini:/usr/local/etc/php/php.ini
+    working_dir: /var/www/html
+    container_name: dev-adminlte-web
+    depends_on:
+      - dev-adminlte-db
+    restart: always
+
+  dev-adminlte-db:
+    image: postgres:16.4
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/postgresql/data:/var/lib/postgresql/data
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment: # Set the postgres user name, password and database name.
+      POSTGRES_USER: wsat
+      POSTGRES_PASSWORD: wsat
+      POSTGRES_DB: devdb
+    hostname: dev-adminlte-db
+    container_name: dev-adminlte-db
+    restart: always
+
+  dev-adminlte-pgadmin4:
+    image: dpage/pgadmin4:9.8
+    ports:
+        - 8000:80
+    volumes:
+        - ./docker/pgadmin4:/var/lib/pgadmin
+    environment: # Set the login information of pgAdmin 4.
+        PGADMIN_DEFAULT_EMAIL: root@example.com
+        PGADMIN_DEFAULT_PASSWORD: root
+    hostname: pgadmin4
+    container_name: dev-adminlte-pgadmin4
+    depends_on:
+      - dev-adminlte-db
+    restart: always
