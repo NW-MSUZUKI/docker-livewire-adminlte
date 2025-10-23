@@ -27,4 +27,4 @@ fresh:
 web:
 	docker compose exec dev-adminlte-web bash
 sql:
-	docker compose exec dev-adminlte-web bash -c 'psql -h dev-adminlte-db -p 5432 -d devdb -U default'
+	docker compose exec dev-adminlte-web bash -c 'psql -h dev-adminlte-db -p 5432 -d devdb -U wsat'
